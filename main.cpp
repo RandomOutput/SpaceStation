@@ -79,7 +79,7 @@ public:
     {
 
         int id = vid.cube();
-        LOG("cubeID: %i\n", id+1);
+        //LOG("cubeID: %i\n", id+1);
         x = x + (200 * (int)(vid.cube()+1));
 
         // Integer pixels
@@ -104,10 +104,19 @@ public:
         vid.bg0.setPanning(vec(xi, 0));
         
         //HANDLE THE ENEMY MOVEMENT ALONG THE BASE
-        if((x)<= EnemyLoc && EnemyLoc < (x+128)
+        LOG("x:%f \n", x);
+        if((x-200)<= enemyLoc && enemyLoc < (x-200+128))
         {
-            float normLoc = (EnemyLoc - x)/128;
+            float normLoc = (enemyLoc - (x-200))/128;
+
             LOG("%i | normLoc: %f\n", (int)vid.cube(), normLoc);
+            LOG("***POS: %i", (int)round(normLoc*128));
+            vid.sprites[1].setImage(Enemy);
+            vid.sprites[1].move(vec((normLoc*128.0f) - 64, 82.0f - 64.0f));
+        }
+        else 
+        {
+            vid.sprites[1].hide();
         }
     }
 
@@ -138,7 +147,7 @@ void main()
     while (1) {
         // Scroll based on accelerometer tilt
         Int2 accel = instances[0].vid.physicalAccel().xy();
-        LOG("%f\n", newX);
+        //LOG("%f\n", newX);
 
         if (accel.x > 10 || accel.x < -10)
         {

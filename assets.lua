@@ -9,3 +9,4 @@ Star = image{"star-8.png", pinned=true, width=8, height=8}
 Font = image{"font-8x16.png", pinned=true, width=8, height=16}
 Background = image{ "yoshis-island.png" }
 Character = image{"characterbase.png", pinned=true}
+Enemy = image{"enemybase.png", pinned=true}

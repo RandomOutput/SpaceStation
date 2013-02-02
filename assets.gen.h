@@ -13,4 +13,5 @@ extern const Sifteo::PinnedAssetImage Star;
 extern const Sifteo::PinnedAssetImage Font;
 extern const Sifteo::AssetImage Background;
 extern const Sifteo::PinnedAssetImage Character;
+extern const Sifteo::PinnedAssetImage Enemy;
 extern const Sifteo::AssetTracker Music;
