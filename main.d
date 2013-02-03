@@ -17,6 +17,7 @@ main.o: main.cpp assets.gen.h \
   /Users/RandomOutput/Developer/Sifteo/sifteo-sdk-mac64-v0.9.8-203-gc80efac/include/sifteo/memory.h \
   /Users/RandomOutput/Developer/Sifteo/sifteo-sdk-mac64-v0.9.8-203-gc80efac/include/sifteo/asset/audio.h \
   /Users/RandomOutput/Developer/Sifteo/sifteo-sdk-mac64-v0.9.8-203-gc80efac/include/sifteo/asset/image.h \
+  main.h \
   /Users/RandomOutput/Developer/Sifteo/sifteo-sdk-mac64-v0.9.8-203-gc80efac/include/sifteo.h \
   /Users/RandomOutput/Developer/Sifteo/sifteo-sdk-mac64-v0.9.8-203-gc80efac/include/sifteo/audio.h \
   /Users/RandomOutput/Developer/Sifteo/sifteo-sdk-mac64-v0.9.8-203-gc80efac/include/sifteo/cube.h \
@@ -74,6 +75,8 @@ assets.gen.h:
 /Users/RandomOutput/Developer/Sifteo/sifteo-sdk-mac64-v0.9.8-203-gc80efac/include/sifteo/asset/audio.h:
 
 /Users/RandomOutput/Developer/Sifteo/sifteo-sdk-mac64-v0.9.8-203-gc80efac/include/sifteo/asset/image.h:
+
+main.h:
 
 /Users/RandomOutput/Developer/Sifteo/sifteo-sdk-mac64-v0.9.8-203-gc80efac/include/sifteo.h:
 
