@@ -18,10 +18,13 @@ static Metadata M = Metadata()
     .icon(Icon)
     .cubeRange(gNumCubes);
 
-static unsigned enemyLoc = 200;
+static unsigned const enemies [] = {500, 1000, 1500, 2000};
+static unsigned enemyLoc = enemies[0];
 static unsigned mode = 0;
 static unsigned endPoint = 2000;
+static unsigned currentEnemy = 0;
 static TiltShakeRecognizer tsr;
+static const float millisPerFrame = 50.0f;
 
 /* mode 0 - walk
  * mode 1 - fight
@@ -39,6 +42,7 @@ public:
     static const float bgTiltSpeed = 1.0f;
     static const float starEmitSpeed = 60.0f;
     static const float starTiltSpeed = 3.0f;
+
     VideoBuffer vid;
 
     void init(CubeID cube)
@@ -58,8 +62,8 @@ public:
 
         if((int)cube == 0)
         {
-            vid.sprites[0].setImage(Character);
-            vid.sprites[0].move(vec(-20, 82-64));
+            vid.sprites[2].setImage(CharacterIdle);
+            vid.sprites[2].move(vec(-20, 82-64));
         }
 
         // Allocate 16x2 tiles on BG1 for text at the bottom of the screen
@@ -117,9 +121,11 @@ public:
 
             //LOG("%i | normLoc: %f\n", (int)vid.cube(), normLoc);
             //LOG("***POS: %i", (int)round(normLoc*128));
-            vid.sprites[1].setImage(Enemy);
+            vid.sprites[1].setImage(EnemyIdle);
             vid.sprites[1].move(vec((normLoc*128.0f) - 64, 82.0f - 64.0f));
 
+            int nextFrame = SystemTime::now().cycleFrame(millisPerFrame, 100);
+            vid.sprites[1].setImage(EnemyIdle, nextFrame % 2);
         }
         else 
         {
@@ -142,28 +148,97 @@ private:
 float x = 0;
 
 static StarDemo instances[gNumCubes];
-float newX;
+float newX = -200;
+
+void wait(TimeDelta t)
+{
+    auto deadline = SystemTime::now() + t;
+    while(deadline.inFuture()) {
+        System::paint();
+    }
+}
+
+void doRestart()
+{
+    newX = -200;
+    enemyLoc = enemies[0];
+    currentEnemy = 0;
+
+    instances[0].vid.sprites[2].setImage(CharacterIdle);
+    instances[0].vid.sprites[2].move(vec(-20, 82-64));
+}
+
+void doRestartScreen()
+{
+
+    instances[0].vid.bg0.image(vec(0,0), Win);
+    instances[1].vid.bg0.image(vec(0,0), Win);
+    instances[2].vid.bg0.image(vec(0,0), Win);
+    instances[0].vid.bg0.setPanning(vec(0,0));
+    instances[1].vid.bg0.setPanning(vec(0,0));
+    instances[2].vid.bg0.setPanning(vec(0,0));
+
+    while(!CubeID(0).isTouching()&&!CubeID(1).isTouching()&&!CubeID(2).isTouching())
+    {
+        System::paint();
+    }
+
+    doRestart();
+}
+
+void doEnd()
+{
+    TimeStep ts;
+    float sX = -30;
+    int lastID = 0;
+    float charFrame = 0;
+
+    while(sX < (192*3)+30)
+    {
+        LOG_FLOAT(ts.delta().seconds());
+        sX = sX + 2;
+        int cubeID = (int)((sX)/192);   
+        LOG_FLOAT(sX);
+        int sXint = (int)sX;
+
+        if(cubeID != lastID) 
+        {
+            instances[lastID].vid.sprites[2].hide();
+            lastID = cubeID;
+        }
+
+        charFrame += 0.2f;
+        instances[cubeID].vid.sprites[2].setImage(CharacterWalk, ((int)charFrame)%2);
+        instances[cubeID].vid.sprites[2].move(vec((int)(sXint%192)-64, 82-64));
+
+        System::paint();
+        wait(0.01f);
+    }
+
+    doRestartScreen();
+}
+    
 
 void startFight()
 {
-    instances[0].vid.sprites[0].hide();
+    instances[0].vid.sprites[2].hide();
     instances[0].vid.bg0.image(vec(0,0), Fight);
     instances[0].vid.bg0.setPanning(vec(0,0));
     instances[0].vid.sprites[1].hide();
     instances[2].vid.bg0.image(vec(0,0), Fight);
     instances[2].vid.bg0.setPanning(vec(0,0));
 
-    instances[1].vid.sprites[0].setImage(Character);
-    instances[1].vid.sprites[1].setImage(Enemy);
-    instances[1].vid.sprites[0].move(vec(-20, 82-64));
-    instances[1].vid.sprites[1].move(vec(20, 82-64));
+    instances[1].vid.sprites[2].setImage(CharacterIdle);
+    instances[1].vid.sprites[1].setImage(EnemyIdle);
+    instances[1].vid.sprites[2].move(vec(-30, 82-64));
+    instances[1].vid.sprites[1].move(vec(30, 82-64));
 
     tsr.attach(1);
 }
 
 void endFight()
 {
-    enemyLoc = endPoint;
+
     CubeID(1).detachMotionBuffer();
 
     for (int _x = x-18; _x < x; _x++) {
@@ -171,16 +246,30 @@ void endFight()
         instances[2].drawColumn(_x);
     }
 
-    instances[0].vid.sprites[0].setImage(Character);
-    instances[0].vid.sprites[0].move(vec(-20, 82-64));
-    instances[1].vid.sprites[0].hide();
+    instances[0].vid.sprites[2].setImage(CharacterIdle);
+    instances[0].vid.sprites[2].move(vec(-20, 82-64));
+    instances[1].vid.sprites[2].hide();
     instances[1].vid.sprites[1].hide();
+
+    currentEnemy++;
+    if(currentEnemy < 3)
+    {
+        enemyLoc = enemies[currentEnemy];
+    } 
+    else
+    {
+        //end the game instead of this hack
+        //enemyLoc = 10000;
+        doEnd();
+    }
 }
 
-void wait(TimeDelta t)
+void flashHit(TimeDelta t)
 {
     auto deadline = SystemTime::now() + t;
     while(deadline.inFuture()) {
+        int nextFrame = SystemTime::now().cycleFrame(millisPerFrame, 100);
+        instances[1].vid.bg0.image(vec(0,0),Hit, nextFrame % 2);
         System::paint();
     }
 }
@@ -196,8 +285,17 @@ void doFight()
     //Fight Idle
     while(!haveShake())
     {
+        int nextFrame = SystemTime::now().cycleFrame(10.0f, 100);
+        instances[1].vid.sprites[1].setImage(EnemyIdle, nextFrame % 2);
         System::paint();
     }
+    instances[1].vid.sprites[1].setImage(EnemyHit);
+    instances[1].vid.sprites[2].setImage(CharacterPunch);
+
+    instances[0].vid.bg0.image(vec(0,0), Hit);
+    instances[2].vid.bg0.image(vec(0,0), Hit);
+
+    wait(2.0f);
     //Fight Hit
     
     endFight();
@@ -208,9 +306,10 @@ void doFight()
 void doWalk()
 {
     Byte2 accel;
+
     while(newX < endPoint)
     {
-        if(newX >= enemyLoc - 20) doFight();
+        if(newX >= enemyLoc - 100) doFight();
 
         
         // Scroll based on accelerometer tilt
@@ -220,6 +319,9 @@ void doWalk()
         {
             // Floating point pixels
             newX += accel.x * (10.0f / 128.0f);
+            int nextFrame = SystemTime::now().cycleFrame(millisPerFrame, 100);
+            
+            instances[0].vid.sprites[2].setImage(CharacterWalk, nextFrame % 2);
         }
 
         for (unsigned i = 0; i < arraysize(instances); i++)
