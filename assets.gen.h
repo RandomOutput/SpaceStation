@@ -11,4 +11,5 @@ extern const Sifteo::AssetImage Icon;
 extern Sifteo::AssetGroup GameAssets;
 extern const Sifteo::PinnedAssetImage Font;
 extern const Sifteo::AssetImage StationWalls;
+extern const Sifteo::PinnedAssetImage Spaceman;
 extern const Sifteo::AssetTracker Music;

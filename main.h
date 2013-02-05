@@ -3,7 +3,7 @@
 
 using namespace Sifteo;
 
-#define NUM_CUBES	1
+#define NUM_CUBES	3
 
 static AssetSlot MainSlot = AssetSlot::allocate()
         .bootstrap(GameAssets);
@@ -25,8 +25,8 @@ static VideoBuffer buffers[NUM_CUBES];
 
 int prev_xt = 0;
 //float x = 0;
-float newX = 0;
-float newY = 0;
+float newX = 120;
+float newY = 150;
 int lastEnemyCube = 2; //enemies always come in from the right
 
 //game flow
