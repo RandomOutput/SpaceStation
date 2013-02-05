@@ -27,6 +27,7 @@ int prev_xt = 0;
 float x = 0;
 float newX = -200;
 int lastEnemyCube = 2; //enemies always come in from the right
+
 //game flow
 void main();
 void initCube(int _buffer);
@@ -44,7 +45,7 @@ void wait(TimeDelta t);
 void flashHit();
 bool haveShake();
 
-//drawing
+//drawing & the like
 void updateBG(int id, float x);
 void drawColumn(int _buffer, int x);
 void updateEnemy();

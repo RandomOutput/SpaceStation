@@ -1,6 +1,7 @@
 #include "assets.gen.h"
 #include "main.h"
 #include <sifteo.h>
+
 using namespace Sifteo;
 
 void main()
@@ -241,6 +242,17 @@ void updateBG(int id, float x)
     buffers[id].bg0.setPanning(vec(xi, 0));
 }
 
+void drawColumn(int _buffer, int x)
+{
+    // Draw a vertical column of tiles
+
+    int bg0Width = buffers[_buffer].bg0.tileWidth();
+    int dstx = umod(x, bg0Width);
+    int srcx = umod(x, Background.tileWidth());
+
+    buffers[_buffer].bg0.image(vec(dstx, 0), vec(1, bg0Width), Background, vec(srcx, 0));
+}
+
 void updateEnemy()
 {
     int sXint = (int)enemyLoc - newX;
@@ -264,15 +276,4 @@ void updateEnemy()
         buffers[cubeID].sprites[1].setImage(EnemyIdle, nextFrame % 2);
         buffers[cubeID].sprites[1].move(vec((sXint%192)-64, 82-64));
     }
-}
-
-void drawColumn(int _buffer, int x)
-{
-    // Draw a vertical column of tiles
-
-    int bg0Width = buffers[_buffer].bg0.tileWidth();
-    int dstx = umod(x, bg0Width);
-    int srcx = umod(x, Background.tileWidth());
-
-    buffers[_buffer].bg0.image(vec(dstx, 0), vec(1, bg0Width), Background, vec(srcx, 0));
 }

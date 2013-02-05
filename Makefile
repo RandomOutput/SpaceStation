@@ -1,4 +1,4 @@
-APP = stars
+APP = spacestation
 
 include $(SDK_DIR)/Makefile.defs
 
