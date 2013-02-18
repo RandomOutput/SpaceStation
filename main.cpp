@@ -20,13 +20,13 @@ void initCube(int id)
 {
     buffers[id].initMode(BG0_SPR_BG1);
     buffers[id].attach(id);
+    
     for (int x = -1; x < 17; x++) {
         drawColumn(id, x, 16);
     }
+
     buffers[id].bg1.setMask(BG1Mask::filled(vec(6,4), vec(10,12)));
     buffers[id].bg1.image(vec(6,4), vec(10,12), Spaceman, vec(5,4), 0);
-    //buffers[id].sprites[7].setImage(Spaceman);
-//image (UInt2 destXY, UInt2 size, const AssetImage &image, UInt2 srcXY, unsigned frame=0)
 }
 
 void doPan()
